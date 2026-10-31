@@ -136,4 +136,63 @@ public class Database {
 
         return this;
     }
+
+    public Database innerJoin(String tabela, String primeiraColuna, String segundaColuna){
+        this.query += " INNER JOIN " + tabela + " ON " + primeiraColuna + " = " + segundaColuna;
+        return this;
+    }
+
+    public Database innerJoin(String tabela, String primeiraColuna, String operador, String segundaColuna){
+        this.query += " INNER JOIN " + tabela + " ON " + primeiraColuna + " " + operador + " " + segundaColuna;
+        return this;
+    }
+
+    public Database innerJoin(String tabela, String condicao){
+        this.query += " INNER JOIN " + tabela + " ON " + condicao;
+        return this;
+    }
+
+    public Database and(HashMap<String, Object> regras){
+        for (Map.Entry<String, Object> entry : regras.entrySet()){
+            this.query += " AND " + formatarCondicao(entry.getKey(), entry.getValue());
+        }
+        return this;
+    }
+
+    public Database and(String colunaOuOperacao, Object valor){
+        this.query += " AND " + formatarCondicao(colunaOuOperacao, valor);
+        return this;
+    }
+
+    public Database and(String condicao){
+        this.query += " AND " + condicao;
+        return this;
+    }
+
+    public Database or(HashMap<String, Object> regras){
+        for (Map.Entry<String, Object> entry : regras.entrySet()){
+            this.query += " OR " + formatarCondicao(entry.getKey(), entry.getValue());
+        }
+        return this;
+    }
+
+    public Database or(String colunaOuOperacao, Object valor){
+        this.query += " OR " + formatarCondicao(colunaOuOperacao, valor);
+        return this;
+    }
+
+    public Database or(String condicao){
+        this.query += " OR " + condicao;
+        return this;
+    }
+
+    private String formatarCondicao(String chave, Object valor){
+        String formatado = chave + " ";
+        if(!chave.contains("=")){
+            formatado += "LIKE " + ((valor instanceof String) ? "'%" + valor + "%'" : valor);
+        } else {
+            formatado += (valor instanceof String) ? "'" + valor + "'" : valor;
+        }
+        return formatado;
+    }
 }
